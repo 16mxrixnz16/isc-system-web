@@ -4,9 +4,14 @@ pipeline {
         nodejs '20'
     }
     stages {
-        stage('Clone Project') {
+        stage('Install Node.js') {
             steps {
-                git 'https://github.com/PaulLandaeta/isc-system-web.git'
+                sh '''
+                curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION | sudo -E bash -
+                sudo apt-get install -y nodejs
+                node -v
+                npm -v
+                '''
             }
         }
         stage('Install Dependencies') {
@@ -14,9 +19,9 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Build') {
+        stage('Run Cypress Tests') {
             steps {
-                sh 'npm run build'
+                sh 'npx cypress run --browser chrome --headless'
             }
         }
     }
