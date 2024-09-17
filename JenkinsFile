@@ -1,26 +1,29 @@
 pipeline {
     agent any
+    
     tools {
-        nodejs '20'
+        // Aquí configuramos la herramienta Node.js preinstalada en Jenkins
+        nodejs '20' // Asegúrate de que la versión '20' esté instalada en tu Jenkins.
     }
+    
     stages {
-        stage('Install Node.js') {
+        stage('Checkout') {
             steps {
-                sh '''
-                curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION | sudo -E bash -
-                sudo apt-get install -y nodejs
-                node -v
-                npm -v
-                '''
+                // Clonamos la rama correcta, en este caso 'marian'
+                git branch: 'marian', url: 'https://github.com/16mxrixnz16/isc-system-web.git'
             }
         }
+        
         stage('Install Dependencies') {
             steps {
+                // Instalamos las dependencias de Node.js
                 sh 'npm install'
             }
         }
+        
         stage('Run Cypress Tests') {
             steps {
+                // Ejecutamos los tests de Cypress en modo headless
                 sh 'npx cypress run --browser chrome --headless'
             }
         }
